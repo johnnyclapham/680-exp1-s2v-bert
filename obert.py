@@ -11,7 +11,9 @@ import tensorflow as tf
 tokenizer = BertTokenizer.from_pretrained('bert-base-uncased')
 
 text = "The shopping list button is broken."
-marked_text = "[CLS] " + text + " [SEP]"
+with open('ob.txt', 'r') as file:
+    ob = file.read().replace('\n', '')
+marked_text = "[CLS] " + ob + " [SEP]"
 
 # Tokenize our sentence with the BERT tokenizer.
 tokenized_text = tokenizer.tokenize(marked_text)

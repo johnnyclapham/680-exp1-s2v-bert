@@ -21,6 +21,8 @@ with open('cosine_similarity.txt', 'w') as f:
     f.write(str(output))
 
 print(output)
+# fig = output.visualize_heatmap()
+# fig.write_html("heatmap.html")
 
 
 
