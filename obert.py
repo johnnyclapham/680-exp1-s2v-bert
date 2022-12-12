@@ -3,6 +3,10 @@ from transformers import BertTokenizer, BertModel
 import numpy
 import logging
 import matplotlib.pyplot as plt
+import tensorflow as tf
+
+# tf.compat.v1.disable_v2_behavior()
+
 # Load pre-trained model tokenizer (vocabulary)
 tokenizer = BertTokenizer.from_pretrained('bert-base-uncased')
 
@@ -83,6 +87,8 @@ print(numpy.shape(token_embeddings_squeezed))
 torch.save(token_embeddings_squeezed, 'bert_embeddings_squeezed.pt')
 torch.save(token_embeddings, 'bert_embeddings_unsqueezed.pt')
 
+print(token_embeddings.dtype)
+print(type(token_embeddings))
 
 with open('bert_embeddings_squeezed.txt', 'w') as f:
     f.write(str(token_embeddings_squeezed))
