@@ -80,6 +80,8 @@ print(numpy.shape(token_embeddings_squeezed))
 # print(token_embeddings_squeezed)
 
 # torch.set_printoptions(threshold=10_000)
+torch.save(token_embeddings_squeezed, 'bert_embeddings_squeezed.pt')
+torch.save(token_embeddings, 'bert_embeddings_unsqueezed.pt')
 
 
 with open('bert_embeddings_squeezed.txt', 'w') as f:
