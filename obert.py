@@ -72,18 +72,13 @@ with torch.no_grad():
 torch.set_printoptions(threshold=10_000)
 torch.set_printoptions(profile="full")
 token_embeddings = torch.stack(hidden_states, dim=0)
-
 token_embeddings.size()
 token_embeddings_squeezed = torch.squeeze(token_embeddings, dim=1)
-
 print('____________________________')
-
 print(numpy.shape(token_embeddings))
 print(numpy.shape(token_embeddings_squeezed))
 
-# print(token_embeddings_squeezed)
-
-# torch.set_printoptions(threshold=10_000)
+# Note: Save as tensors
 torch.save(token_embeddings_squeezed, 'bert_embeddings_squeezed.pt')
 torch.save(token_embeddings, 'bert_embeddings_unsqueezed.pt')
 
