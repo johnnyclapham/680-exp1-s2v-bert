@@ -9,10 +9,10 @@ from numpy.linalg import norm
 # cos_sim = cosine_similarity(vector1,vector2)
 
 # tensor_bert = tf.io.read_file('./bert_embeddings_unsqueezed.pt', name=None)
-tensor_bert = torch.load('./bert_embeddings_unsqueezed.pt')
+tensor_bert = torch.load('./bert_embeddings_squeezed.pt')
 
 # tensor_s2v = tf.io.read_file('./S2V_embeddings.pt', name=None)
-tensor_s2v = torch.load('./S2V_embeddings.pt')
+tensor_s2v = torch.load('./S2V_screen_emb.pt')
 
 
 cos = torch.nn.CosineSimilarity(dim=0)
@@ -25,7 +25,13 @@ print(type(tensor_s2v))
 print('____________________________')
 print(type(tensor_bert))
 print(type(tensor_s2v))
-output = cos(tensor_bert, tensor_bert)
+
+# tensor_s2v = torch.stack(tensor_s2v, dim=0)
+
+print(type(tensor_bert))
+print(type(tensor_s2v))
+
+output = cos(tensor_bert, tensor_s2v)
 print(output)
 
 
