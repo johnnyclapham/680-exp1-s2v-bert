@@ -35,16 +35,6 @@ torch.save(output, 'embeddings/cosine_similarity.pt')
 with open('embeddings/cosine_similarity.txt', 'w') as f:
     f.write(str(output))
 
-# print("Cosine Similarity:",output)
-# print(output)
-# s2vsize= tensor_s2v_flatten.shape[0]
-# bertsize = tensor_bert_flatten.shape[0]
-# padding_length = (int(s2vsize)-int(bertsize))/2
-# print(type(padding_length))
-# pad = torch.nn.ConstantPad1d(padding_length, 0)
-# pad = torch.nn.ConstantPad1d(int(padding_length), 0)
-
-
 #Note: Initialize cosine sim function
 cossin = torch.nn.CosineSimilarity(dim=0)
 
@@ -57,9 +47,6 @@ padding_length = (int(s2vsize)-int(bertsize))/2
 pad = torch.nn.ConstantPad1d(int(padding_length), 0)
 tensor_bert_flatten_padded = pad(tensor_bert_flatten)
 
-# print("tensor_bert_flatten_padded: "+str(tensor_bert_flatten_padded.shape[0]))
-# print("tensor_s2v_flatten: "+str(tensor_s2v_flatten.shape[0]))
-
 output = cossin(tensor_s2v_flatten, tensor_bert_flatten_padded)
 
 # output.reshape(1, 1)
@@ -67,21 +54,4 @@ print(output)
 
 # fig = output.visualize_heatmap()
 # fig.write_html("heatmap.html")
-
-
-
-
-
-
-#debuging print statements below
-# print(type(tensor_bert))
-# print(type(tensor_s2v))
-# print('____________________________')
-# print(type(tensor_bert))
-# print(type(tensor_s2v))
-# # tensor_s2v = torch.stack(tensor_s2v, dim=0)
-# print(type(tensor_bert))
-# print(type(tensor_s2v))
-# output = cos(tensor_bert, tensor_s2v)
-# print(output)
-print('end')
+# print('end')

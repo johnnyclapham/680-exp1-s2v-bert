@@ -20,80 +20,13 @@ class OBQuery:
         self.ground_truth = ground_truth
 
 
-# def getBert():
-#     # Load pre-trained model tokenizer (vocabulary)
-#     tokenizer = BertTokenizer.from_pretrained('bert-base-uncased')
-
-
-
-# def get_screen_ranking(screen_path, ob_list, model, preprocess, device):
-#     model = model.to(device)
-#     paths = glob(screen_path)
-#     paths.sort()
-#     image_dict = {}
-#     for path in paths:
-#         image_id = path.split("/")[-1]
-#         image_dict[image_id] = preprocess(Image.open(path)).unsqueeze(0)
-
-#     each_app_result = []
-#     for ob in ob_list:
-#         text = clip.tokenize(ob.text, context_length=77, truncate=True).to(device)
-#         score = {}
-#         for key, value in image_dict.items():
-#             image = value.to(device)
-#             with torch.no_grad():
-#                 logits_per_image, logits_per_text = model(image, text)
-#                 score[key] = logits_per_image.item()
-
-#         ranked_screens = sorted(score.keys(), key=lambda f: -score[f])
-#         # print(f'OB-ID: {ob.id}\tScore: {score}\t Ranked Screens: {ranked_screens}')
-
-#         each_ob_result = []
-#         for screen in ranked_screens:
-#             if screen == ob.ground_truth:
-#                 each_ob_result.append(1)
-#             else:
-#                 each_ob_result.append(0)
-
-#         each_app_result.append(each_ob_result)
-#     return each_app_result
-
-
 def getcossim(screen_path, ob_list, device,image_dict):
     print("screen_path "+str(screen_path))
-    # model = model.to(device)
     paths = glob(screen_path)
-    # print("paths: "+str(glob.__sizeof__))
     paths.sort()
-    # image_dict = {}
     print("ty")
     print(paths)
-    # if paths is None:
-    #     return
-    # for path in paths:
-    #     image_id = path.split("/")[-1]
-    #     # image_dict[image_id] = preprocess(Image.open(path)).unsqueeze(0)
-    #     #comput the image embeddings
-    #     print("image id: "+ str(image_id))
-    #     print('yam')
-    #     #compute s2v embedding for image
-    #     # os.system("python scripts/Screen2Vec/get_embedding.py -s "+path+" -u 'scripts/Screen2Vec/UI2Vec_model.ep120' -m 'scripts/Screen2Vec/Screen2Vec_model_v4.ep120' -l 'scripts/Screen2Vec/layout_encoder.ep800' -o '../s2vout'")
-    #     screen = path
-    #     ui_model = 'scripts/Screen2Vec/UI2Vec_model.ep120'
-    #     screen_model = 'scripts/Screen2Vec/Screen2Vec_model_v4.ep120'
-    #     layout_model = 'scripts/Screen2Vec/layout_encoder.ep800'
-    #     # tensorArray = get_embedding(path,ui_model,screen_model,layout_model)
-    #     print("screen path: "+str(path))
-    #     #!!!!!!!!!!!!!!!!!!!!!!!!!!!
-    #     #Note: this is where the roadblock bug is
-    #     # We cannot pass an imageto S2V, we need a json file.
-    #     os.system("python scripts/Screen2Vec/get_embedding.py -s "+path+" -u "+ui_model+" -m "+screen_model+" -l "+layout_model+" -o '../s2vout'")
-    #     # return
-    #     #store embedding in image_dict
-    #     image_dict[image_id] = torch.load('../s2vout/embeddings/S2V_screen_emb_test.pt')
-    #     # image_dict[image_id] = tensorArray[0]
-    # # return
-
+    
     each_app_result = []
     # print("ob list: "+ str(ob_list))
     for ob in ob_list:
@@ -119,9 +52,6 @@ def getcossim(screen_path, ob_list, device,image_dict):
         token_embeddings_squeezed = torch.squeeze(token_embeddings, dim=1)
         #^^^^^^ end bert code ^^^^^^
 
-        # print(token_embeddings_squeezed)
-        # return
-
         #compute similarity between this ob and the image embeddings in image_dict
         score = {}
         print("image_dict size: "+ str(len(image_dict)))
@@ -132,13 +62,6 @@ def getcossim(screen_path, ob_list, device,image_dict):
             print("ob: "+str(id))
             print("img_id: "+str(img_id))
             print("ob_gt: "+str(ob_gt))
-            #if the ob is belonging to the screen, 
-            # compute the cosine similarity of the
-            # ob and the image screen
-            # if(img_id!=ob_gt):
-            #     print("image id is not equal")
-            #     continue
-            # if(img_id==ob_gt):
             print("image id is equal!!")
             image = value.to(device)
             image_flatten = torch.flatten(image.detach())
@@ -149,16 +72,9 @@ def getcossim(screen_path, ob_list, device,image_dict):
             padding_length = (int(s2vsize)-int(bertsize))/2
             pad = torch.nn.ConstantPad1d(int(padding_length), 0)
             tensor_bert_flatten_padded = pad(text_flatten)
-            # print("tensor_bert_flatten_padded: "+str(tensor_bert_flatten_padded))
-            # print("image_flatten: "+str(image_flatten))
             output = cos(tensor_bert_flatten_padded, image_flatten)
             score[key] = output
             print("score: "+str(output))
-            # os.system("python scripts/exp1/similarity.py")
-
-            # with torch.no_grad():
-            #     logits_per_image, logits_per_text = model(image, text)
-            #     score[key] = logits_per_image.item()
 
         print("score dict: "+ str(score))
         ranked_screens = sorted(score.keys(), key=lambda f: -score[f])
@@ -188,39 +104,12 @@ def getcossim(screen_path, ob_list, device,image_dict):
 
 
 if __name__ == "__main__":
-    # These paths are used for testing
-    # ob_folder_path = '/Users/antusaha/Documents/GitHub/bug_report_mapping/RICO_Data/ir_engine_data/input_data/splitted_data/testing_data/csv_files/'
-    # ob_folder_path = './clip_performance_data_test/ob/'
-    # screen_folder_path = './clip_performance_data_test/screens/'
-    # result_folder_path = './clip_performance_data_test/output/v2_last_update_ViT-L_14.csv'
-
-    # These paths are used for running on bg1 machine
-    # ob_folder_path = '/home/asaha02/Documents/Dataset/RICO_Data/splitted_data/testing_data/csv_files/'
-    # screen_folder_path = '/home/asaha02/Documents/Dataset/RICO_Data/Screens_Per_App/'
-    # result_folder_path = '/home/asaha02/Documents/Result/Raw_CLIP_Result/raw_clip_result_bg1(1088_to_rest).csv'
-
-    # These paths are used for running on our server
-    # ob_folder_path = '../data/obs_behaviors/test_set/'
-    ob_folder_path = '../data/small_obs/'
-
-    # ob_folder_path = '../data/obs_behaviors/temp/'
-    # screen_folder_path = '../data/full_images/'
-    # screen_folder_path = '../data/full_images/'
-    # screen_folder_path = '../data/combined/'
-    screen_folder_path = '../data/small_images/'
-    # screen_folder_path = '../data/combined copy/'
-    # screen_folder_path = '../data/targeted/'
-
-    # screen_folder_path = '../data/screen_components/test_set/'
-
-    result_folder_path = '../results/result(Experiment-2-AllOB-SGD)-small.csv'
+    ob_folder_path = '../data/obs_behaviors/test_set/'
+    screen_folder_path = '../data/screens_per_app_test/'
+    result_folder_path = '../results/result(Experiment-2-AllOB-SGD)-testset.csv'
 
     device = "cuda:1" if torch.cuda.is_available() else "cpu"
     print(f"Device: {device}")
-    # model, preprocess = clip.load("ViT-B/32")
-
-    # model.load_state_dict(torch.load("Experiment-2-AllOB-SGD.pt")['model_state_dict'])
-    # model.eval()
 
     with open(result_folder_path, 'w', newline='') as csvfile:
         writer = csv.writer(csvfile, delimiter=',')
@@ -234,20 +123,13 @@ if __name__ == "__main__":
         app_name_list.append(app_name)
     app_name_list.sort()
     print(f'Number of total app: {app_name_list.__len__()}')
-    # sys.exit()
+
 
     #Note: uncomment the full list for eval
     for i in range(0, len(app_name_list)):
-    # for i in range(0, 1):
-
         app_name = app_name_list[i]
-
         app_ob_path = ob_folder_path + app_name
-        # app_screens_path = screen_folder_path + app_name + '/*.jpg'
-        # app_screens_path = screen_folder_path + app_name + '/*.json'
-        app_screens_path = screen_folder_path + '*.json'
-        # app_screens_path = screen_folder_path + app_name + '/*'
-        # print(app_screens_path)
+        app_screens_path = screen_folder_path + app_name + '/*.json'
         result_of_each_app = []
 
         for root, dirs, files in os.walk(app_ob_path):
@@ -270,42 +152,34 @@ if __name__ == "__main__":
         print(f'App name: {app_name}')
         print(f'# of OB: {ob_query_list.__len__()}')
 
-        # result_of_each_app = get_screen_ranking(app_screens_path, ob_query_list, model, preprocess, device)
         print(app_screens_path)
-
-        #########################
-        #########################
-        #todo uncomment
         image_dict = {}
         paths = glob(app_screens_path)
+        print("paths: "+str(paths))
         for path in paths:
             image_id = path.split("/")[-1]
-            # image_dict[image_id] = preprocess(Image.open(path)).unsqueeze(0)
             #comput the image embeddings
             print("image id: "+ str(image_id))
             print('yam')
             #compute s2v embedding for image
-            # os.system("python scripts/Screen2Vec/get_embedding.py -s "+path+" -u 'scripts/Screen2Vec/UI2Vec_model.ep120' -m 'scripts/Screen2Vec/Screen2Vec_model_v4.ep120' -l 'scripts/Screen2Vec/layout_encoder.ep800' -o '../s2vout'")
             screen = path
             ui_model = 'scripts/Screen2Vec/UI2Vec_model.ep120'
             screen_model = 'scripts/Screen2Vec/Screen2Vec_model_v4.ep120'
             layout_model = 'scripts/Screen2Vec/layout_encoder.ep800'
-            # tensorArray = get_embedding(path,ui_model,screen_model,layout_model)
             print("screen path: "+str(path))
-            #!!!!!!!!!!!!!!!!!!!!!!!!!!!
+            
             #Note: this is where the roadblock bug is
             # We cannot pass an imageto S2V, we need a json file.
             os.system("python scripts/Screen2Vec/get_embedding.py -s "+path+" -u "+ui_model+" -m "+screen_model+" -l "+layout_model+" -o '../s2vout'")
-            # return
+            
             #store embedding in image_dict
             image_dict[image_id] = torch.load('../s2vout/embeddings/S2V_screen_emb_test.pt')
             # image_dict[image_id] = tensorArray[0]
-        # return
-        #########################
-        #########################
-        
+    
         print("image_dict: "+str(len(image_dict)))
-        # continue
+        #if there are no screens for an app, skip it...
+        if(len(image_dict)==0):
+            continue
         result_of_each_app = getcossim(app_screens_path, ob_query_list, device,image_dict)
         print("result of each app"+str(result_of_each_app))
         # continue
