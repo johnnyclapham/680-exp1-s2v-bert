@@ -200,20 +200,23 @@ if __name__ == "__main__":
     # result_folder_path = '/home/asaha02/Documents/Result/Raw_CLIP_Result/raw_clip_result_bg1(1088_to_rest).csv'
 
     # These paths are used for running on our server
-    # ob_folder_path = '../data/obs_behaviors/test_set/'
-    ob_folder_path = '../data/small_obs/'
+    ob_folder_path = '../data/obs_behaviors/test_set/'
+    # ob_folder_path = '../data/small_obs/'
 
     # ob_folder_path = '../data/obs_behaviors/temp/'
     # screen_folder_path = '../data/full_images/'
     # screen_folder_path = '../data/full_images/'
     # screen_folder_path = '../data/combined/'
-    screen_folder_path = '../data/small_images/'
+    # screen_folder_path = '../data/screens_per_app/'
+    screen_folder_path = '../data/screens_per_app_test/'
+    # screen_folder_path = '../data/small_images/'
     # screen_folder_path = '../data/combined copy/'
     # screen_folder_path = '../data/targeted/'
 
     # screen_folder_path = '../data/screen_components/test_set/'
 
-    result_folder_path = '../results/result(Experiment-2-AllOB-SGD)-small.csv'
+    # result_folder_path = '../results/result(Experiment-2-AllOB-SGD)-small-2.csv'
+    result_folder_path = '../results/result(Experiment-2-AllOB-SGD)-testset.csv'
 
     device = "cuda:1" if torch.cuda.is_available() else "cpu"
     print(f"Device: {device}")
@@ -235,6 +238,50 @@ if __name__ == "__main__":
     app_name_list.sort()
     print(f'Number of total app: {app_name_list.__len__()}')
     # sys.exit()
+    print("####################")
+    # ##!!!!!!!!!!!!!!!!!!!!!
+    # ##!!!!!!!!!!!!!!!!!!!!!
+    # # app_ob_path = ob_folder_path + app_name
+    # # app_screens_path = screen_folder_path + app_name + '/*.jpg'
+    # app_screens_path = screen_folder_path + app_name + '/*.json'
+    # # app_screens_path = screen_folder_path + '*.json'
+    # # app_screens_path = screen_folder_path + app_name + '/*'
+    # # print(app_screens_path)
+    # ##!!!!!!!!!!!!!!!!!!!!!
+    # ##!!!!!!!!!!!!!!!!!!!!!
+
+    # #########################
+    # #########################
+    # #todo uncomment
+    # image_dict = {}
+    # paths = glob(app_screens_path)
+    # print("paths: "+str(paths))
+    # for path in paths:
+    #     image_id = path.split("/")[-1]
+    #     # image_dict[image_id] = preprocess(Image.open(path)).unsqueeze(0)
+    #     #comput the image embeddings
+    #     print("image id: "+ str(image_id))
+    #     print('yam')
+    #     #compute s2v embedding for image
+    #     # os.system("python scripts/Screen2Vec/get_embedding.py -s "+path+" -u 'scripts/Screen2Vec/UI2Vec_model.ep120' -m 'scripts/Screen2Vec/Screen2Vec_model_v4.ep120' -l 'scripts/Screen2Vec/layout_encoder.ep800' -o '../s2vout'")
+    #     screen = path
+    #     ui_model = 'scripts/Screen2Vec/UI2Vec_model.ep120'
+    #     screen_model = 'scripts/Screen2Vec/Screen2Vec_model_v4.ep120'
+    #     layout_model = 'scripts/Screen2Vec/layout_encoder.ep800'
+    #     # tensorArray = get_embedding(path,ui_model,screen_model,layout_model)
+    #     print("screen path: "+str(path))
+    #     #!!!!!!!!!!!!!!!!!!!!!!!!!!!
+    #     #Note: this is where the roadblock bug is
+    #     # We cannot pass an imageto S2V, we need a json file.
+    #     os.system("python scripts/Screen2Vec/get_embedding.py -s "+path+" -u "+ui_model+" -m "+screen_model+" -l "+layout_model+" -o '../s2vout'")
+    #     # return
+    #     #store embedding in image_dict
+    #     image_dict[image_id] = torch.load('../s2vout/embeddings/S2V_screen_emb_test.pt')
+    #     # image_dict[image_id] = tensorArray[0]
+    # # return
+    # #########################
+    # #########################
+
 
     #Note: uncomment the full list for eval
     for i in range(0, len(app_name_list)):
@@ -243,11 +290,22 @@ if __name__ == "__main__":
         app_name = app_name_list[i]
 
         app_ob_path = ob_folder_path + app_name
+        # # app_screens_path = screen_folder_path + app_name + '/*.jpg'
+        # # app_screens_path = screen_folder_path + app_name + '/*.json'
+        # app_screens_path = screen_folder_path + '*.json'
+        # # app_screens_path = screen_folder_path + app_name + '/*'
+        # # print(app_screens_path)
+
+        ##!!!!!!!!!!!!!!!!!!!!!
+        ##!!!!!!!!!!!!!!!!!!!!!
+        # app_ob_path = ob_folder_path + app_name
         # app_screens_path = screen_folder_path + app_name + '/*.jpg'
-        # app_screens_path = screen_folder_path + app_name + '/*.json'
-        app_screens_path = screen_folder_path + '*.json'
+        app_screens_path = screen_folder_path + app_name + '/*.json'
+        # app_screens_path = screen_folder_path + '*.json'
         # app_screens_path = screen_folder_path + app_name + '/*'
         # print(app_screens_path)
+        ##!!!!!!!!!!!!!!!!!!!!!
+        ##!!!!!!!!!!!!!!!!!!!!!
         result_of_each_app = []
 
         for root, dirs, files in os.walk(app_ob_path):
@@ -273,11 +331,23 @@ if __name__ == "__main__":
         # result_of_each_app = get_screen_ranking(app_screens_path, ob_query_list, model, preprocess, device)
         print(app_screens_path)
 
+        #     ##!!!!!!!!!!!!!!!!!!!!!
+        # ##!!!!!!!!!!!!!!!!!!!!!
+        # # app_ob_path = ob_folder_path + app_name
+        # # app_screens_path = screen_folder_path + app_name + '/*.jpg'
+        # app_screens_path = screen_folder_path + app_name + '/*.json'
+        # # app_screens_path = screen_folder_path + '*.json'
+        # # app_screens_path = screen_folder_path + app_name + '/*'
+        # # print(app_screens_path)
+        # ##!!!!!!!!!!!!!!!!!!!!!
+        # ##!!!!!!!!!!!!!!!!!!!!!
+
         #########################
         #########################
         #todo uncomment
         image_dict = {}
         paths = glob(app_screens_path)
+        print("paths: "+str(paths))
         for path in paths:
             image_id = path.split("/")[-1]
             # image_dict[image_id] = preprocess(Image.open(path)).unsqueeze(0)
@@ -303,9 +373,42 @@ if __name__ == "__main__":
         # return
         #########################
         #########################
+
+        # #########################
+        # #########################
+        # #todo uncomment
+        # image_dict = {}
+        # paths = glob(app_screens_path)
+        # for path in paths:
+        #     image_id = path.split("/")[-1]
+        #     # image_dict[image_id] = preprocess(Image.open(path)).unsqueeze(0)
+        #     #comput the image embeddings
+        #     print("image id: "+ str(image_id))
+        #     print('yam')
+        #     #compute s2v embedding for image
+        #     # os.system("python scripts/Screen2Vec/get_embedding.py -s "+path+" -u 'scripts/Screen2Vec/UI2Vec_model.ep120' -m 'scripts/Screen2Vec/Screen2Vec_model_v4.ep120' -l 'scripts/Screen2Vec/layout_encoder.ep800' -o '../s2vout'")
+        #     screen = path
+        #     ui_model = 'scripts/Screen2Vec/UI2Vec_model.ep120'
+        #     screen_model = 'scripts/Screen2Vec/Screen2Vec_model_v4.ep120'
+        #     layout_model = 'scripts/Screen2Vec/layout_encoder.ep800'
+        #     # tensorArray = get_embedding(path,ui_model,screen_model,layout_model)
+        #     print("screen path: "+str(path))
+        #     #!!!!!!!!!!!!!!!!!!!!!!!!!!!
+        #     #Note: this is where the roadblock bug is
+        #     # We cannot pass an imageto S2V, we need a json file.
+        #     os.system("python scripts/Screen2Vec/get_embedding.py -s "+path+" -u "+ui_model+" -m "+screen_model+" -l "+layout_model+" -o '../s2vout'")
+        #     # return
+        #     #store embedding in image_dict
+        #     image_dict[image_id] = torch.load('../s2vout/embeddings/S2V_screen_emb_test.pt')
+        #     # image_dict[image_id] = tensorArray[0]
+        # # return
+        # #########################
+        # #########################
         
         print("image_dict: "+str(len(image_dict)))
-        # continue
+        #if there are no screens for an app, skip it...
+        if(len(image_dict)==0):
+            continue
         result_of_each_app = getcossim(app_screens_path, ob_query_list, device,image_dict)
         print("result of each app"+str(result_of_each_app))
         # continue
